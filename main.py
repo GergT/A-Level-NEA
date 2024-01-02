@@ -38,6 +38,14 @@ class Board:
         self.available.append(x)
     return self.available
 
+  #function that returns a list of all squares in a smaller board that can be played
+  def findAvailableMajor(self):
+    self.available = []
+    for x in range (9):
+      if self.bigwins[x] == "":
+        self.available.append(x)
+    return self.available
+    
   #function that checks for a win in an major square. If a win is found, it will then
   #check the whole board to find 3 major wins in a row, or a full game win.
   def winCheck(self):
@@ -57,6 +65,10 @@ class Board:
         if self.bigwins[play.lastplayed] != "":         
           play.lastplayed = 9
         found = True
+        #checking for a draw
+        if self.findAvailable(self.recentlyplayed) == []:
+          self.bigwins[self.recentlyplayed] = "DRAW"
+          
 
     #If a major square has been won, here it checks for a whole game win.
     if found is True:
@@ -66,7 +78,7 @@ class Board:
           self.gameWon = True
           self.display()
           print("Player", self.bigwins[self.winCombos[i][0]], "wins!")
-        
+    
 
 #the superclass for all the forms of players
 class player():
@@ -127,14 +139,239 @@ class stupidAI(player):
     print("The AI played major square:",self.bigchoice,"minor square:",self.littlechoice)
 
 class smartAI(player):
-  def __init__(self,letter):
-    super().__init__(letter)
-
-  def values(self):
+  def __init__(self,ailetter,userletter):
+    super().__init__(ailetter)
     
-  def minimax(self,depth):
-    for x in range(depth):
+    #these will become 3d arrays for all of the possible moves.
+    self.positives = []
+    self.negatives = []
+    self.value = 0
+    self.userletter = userletter
+
+
+  #function that rates all possible plays within a board. returns a 2d list
+  def rate(self,board,letter):
+    boardwin = False
+    #initial values preset. 1 for corners and 2 for centre
+    ratings = [[board,0,1],[board,1,0],[board,2,2],[board,3,0],[board,4,2],[board,5,0],\
+               [board,6,1],[board,7,0],[board,8,1]] 
+    
+    #creates copies of the board to show scenarios possible for the user
+
+    
+    #checking for a two in a row
+    
+    #top row
+    if self.tempboard[board][0] == "-" == self.tempboard[board][1] and self.tempboard[2]\
+    == letter:
+      ratings[1][2] =+5
+      ratings[0][2] =+5
+    if self.tempboard[board][0] == "-" == self.tempboard[board][2] and self.tempboard[1]\
+    == letter:
+      ratings[0][2] =+5
+      ratings[2][2] =+5
+    if self.tempboard[board][1] == "-" == self.tempboard[board][2] and self.tempboard[0]\
+    == letter:
+      ratings[1][2] =+5
+      ratings[2][2] =+5
+
+    #middle row
+    if self.tempboard[board][3] == "-" == self.tempboard[board][4] and self.tempboard[5]\
+    == letter:
+      ratings[3][2] =+5
+      ratings[4][2] =+5
+    if self.tempboard[board][4] == "-" == self.tempboard[board][5] and self.tempboard[3]\
+    == letter:
+      ratings[4][2] =+5
+      ratings[5][2] =+5
+    if self.tempboard[board][3] == "-" == self.tempboard[board][5] and self.tempboard[4]\
+    == letter:
+      ratings[3][2] =+5
+      ratings[5][2] =+5
+
+    #bottom row
+    if self.tempboard[board][6] == "-" == self.tempboard[board][7] and self.tempboard[8]\
+    == letter:
+      ratings[7][2] =+5
+      ratings[6][2] =+5
+    if self.tempboard[board][8] == "-" == self.tempboard[board][7] and self.tempboard[6]\
+    == letter:
+      ratings[8][2] =+5
+      ratings[7][2] =+5
+    if self.tempboard[board][6] == "-" == self.tempboard[board][8] and self.tempboard[7]\
+    == letter:
+      ratings[6][2] =+5
+      ratings[8][2] =+5
+
+    #left column
+    if self.tempboard[board][0] == "-" == self.tempboard[board][3] and self.tempboard[6]\
+    == letter:
+      ratings[0][2] =+5
+      ratings[3][2] =+5
+    if self.tempboard[board][0] == "-" == self.tempboard[board][6] and self.tempboard[3]\
+    == letter:
+      ratings[0][2] =+5
+      ratings[6][2] =+5
+    if self.tempboard[board][6] == "-" == self.tempboard[board][3] and self.tempboard[0]\
+    == letter:
+      ratings[6][2] =+5
+      ratings[3][2] =+5
+    
+    #middle column
+    if self.tempboard[board][1] == "-" == self.tempboard[board][4] and self.tempboard[7]\
+    == letter:
+      ratings[1][2] =+5
+      ratings[4][2] =+5
+    if self.tempboard[board][1] == "-" == self.tempboard[board][7] and self.tempboard[4]\
+    == letter:
+      ratings[1][2] =+5
+      ratings[7][2] =+5
+    if self.tempboard[board][7] == "-" == self.tempboard[board][4] and self.tempboard[1]\
+    == letter:
+      ratings[7][2] =+5
+      ratings[4][2] =+5
       
+    #right column
+    if self.tempboard[board][2] == "-" == self.tempboard[board][5] and self.tempboard[8]\
+    == letter:
+      ratings[2][2] =+5
+      ratings[5][2] =+5
+    if self.tempboard[board][2] == "-" == self.tempboard[board][8] and self.tempboard[5]\
+    == letter:
+      ratings[2][2] =+5
+      ratings[8][2] =+5
+    if self.tempboard[board][8] == "-" == self.tempboard[board][5] and self.tempboard[2]\
+    == letter:
+      ratings[5][2] =+5
+      ratings[8][2] =+5
+
+    #p diagonal
+    if self.tempboard[board][6] == "-" == self.tempboard[board][4] and self.tempboard[2]\
+    == letter:
+      ratings[6][2] =+5
+      ratings[4][2] =+5
+    if self.tempboard[board][2] == "-" == self.tempboard[board][4] and self.tempboard[6]\
+    == letter:
+      ratings[2][2] =+5
+      ratings[4][2] =+5
+    if self.tempboard[board][6] == "-" == self.tempboard[board][2] and self.tempboard[4]\
+    == letter:
+      ratings[2][2] =+5
+      ratings[6][2] =+5
+
+    #n diagonal
+    if self.tempboard[board][0] == "-" == self.tempboard[board][4] and self.tempboard[8]\
+    == letter:
+      ratings[0][2] =+5
+      ratings[4][2] =+5
+    if self.tempboard[board][8] == "-" == self.tempboard[board][4] and self.tempboard[0]\
+    == letter:
+      ratings[8][2] =+5
+      ratings[4][2] =+5
+    if self.tempboard[board][8] == "-" == self.tempboard[board][0] and self.tempboard[4]\
+    == letter:
+      ratings[0][2] =+5
+      ratings[8][2] =+5
+
+    #checking for three in a row
+    if self.tempboard[0] == "-" and \
+    self.tempboard[board][1] == self.tempboard[board][2] == letter or\
+    self.tempboard[board][6] == self.tempboard[board][3] == letter or\
+    self.tempboard[board][4] == self.tempboard[board][8] == letter:
+      ratings[0][2] =+12
+    boardwin = 0
+
+    if self.tempboard[1] == "-" and \
+    self.tempboard[board][0] == self.tempboard[board][2] == letter or\
+    self.tempboard[board][4] == self.tempboard[board][7] == letter:
+      ratings[1][2] =+12
+    boardwin = 1
+
+    if self.tempboard[2] == "-" and \
+    self.tempboard[board][1] == self.tempboard[board][0] == letter or\
+    self.tempboard[board][8] == self.tempboard[board][5] == letter or\
+    self.tempboard[board][4] == self.tempboard[board][6] == letter:
+      ratings[2][2] =+12
+      boardwin = 2
+
+    if self.tempboard[3] == "-" and \
+    self.tempboard[board][0] == self.tempboard[board][6] == letter or\
+    self.tempboard[board][4] == self.tempboard[board][5] == letter:
+      ratings[3][2] =+12
+    boardwin = 3
+
+    if self.tempboard[4] == "-" and \
+    self.tempboard[board][8] == self.tempboard[board][0] == letter or\
+    self.tempboard[board][3] == self.tempboard[board][5] == letter or\
+    self.tempboard[board][2] == self.tempboard[board][6] == letter or\
+    self.tempboard[board][1] == self.tempboard[board][7] == letter:
+      ratings[4][2] =+12
+    boardwin = 4
+
+    if self.tempboard[5] == "-" and \
+    self.tempboard[board][2] == self.tempboard[board][8] == letter or\
+    self.tempboard[board][4] == self.tempboard[board][3] == letter:
+      ratings[5][2] =+12
+    boardwin = 5
+
+    if self.tempboard[6] == "-" and \
+    self.tempboard[board][4] == self.tempboard[board][2] == letter or\
+    self.tempboard[board][0] == self.tempboard[board][3] == letter or\
+    self.tempboard[board][7] == self.tempboard[board][8] == letter:
+      ratings[6][2] =+12
+    boardwin = 6
+
+    if self.tempboard[7] == "-" and \
+    self.tempboard[board][1] == self.tempboard[board][4] == letter or\
+    self.tempboard[board][8] == self.tempboard[board][6] == letter:
+      ratings[7][2] =+12
+    boardwin = 7
+
+    if self.tempboard[8] == "-" and \
+    self.tempboard[board][5] == self.tempboard[board][2] == letter or\
+    self.tempboard[board][0] == self.tempboard[board][4] == letter or\
+    self.tempboard[board][7] == self.tempboard[board][6] == letter:
+      ratings[8][2] =+12
+      boardwin = 8
+
+    #checking for a game win
+    if boardwin is not False:
+      self.tempbigwins[boardwin] = letter
+      for i in range (len(board.wincombos)):
+        if tempbigwins[board.wincombos[i][0]] == tempbigwins[board.wincombos[i][1]] ==\
+        tempbigwins[board.wincombos[i][2]] == letter:
+          ratings[boardwin][2] =+100
+    
+    #checking for a 2-1 block
+    if self.tempboard[board][0] == "-" 
+          
+    
+    return ratings
+  
+  def minimax(self):
+    self.majoravailable = board.findAvailableMajor()
+    #Creates copies of the board so that future predictions can be made.
+    self.tempboard = board.main
+    self.tempbigwins = board.bigwins
+
+    
+    if board.bigwins[play.lastplayed] != "":
+      for y in self.majoravailable:
+        self.positives.append(self.rate(y,self.letter))
+        
+
+    else:
+      self.positives.append(self.rate(play.lastplayed,self.letter))
+
+
+        
+    
+    
+
+  
+        
+      
+
     
 
 #subprograms that control all of the gamemodes
