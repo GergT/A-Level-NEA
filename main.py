@@ -117,7 +117,7 @@ class Board:
           pygame.draw.line(screen,XCOLOUR,(xPos+10,yPos+10),(xPos+290,yPos +290),width = 10)
           pygame.draw.line(screen,XCOLOUR,(xPos+290,yPos+10),(xPos+10,yPos+290),width=10)
         elif board.bigWins[x] =="O":
-          pygame.draw.circle(screen,OCLOUR,(xPos+150,yPos+150),140,width=10)
+          pygame.draw.circle(screen,OCOLOUR,(xPos+150,yPos+150),140,width=10)
         
 
         pygame.display.update()
@@ -209,7 +209,7 @@ class user(player):
 
       elif self.letter == "O":
         board.main[self.bigChoice][self.littleChoice] = self.letter
-        pygame.draw.circle(screen,OCLOUR,((clickedX- smallCalcX)+50,(clickedY- smallCalcY)+50),40,width = 9)
+        pygame.draw.circle(screen,OCOLOUR,((clickedX- smallCalcX)+50,(clickedY- smallCalcY)+50),40,width = 9)
 
       #play.nextMajor is the variable that represents the board that the next user must play in (corresponding to the square the current user selected)
       play.nextMajor = self.littleChoice
@@ -446,6 +446,7 @@ class smartAI(player):
 
     #Checking if a whole game win is possible.
     if boardwin != []:
+      print(boardwin)
       for x in range(len(boardwin)):     
         if boardwin[x] not in self.rememberWins:
           self.rememberWins.append(boardwin[x])
@@ -453,6 +454,7 @@ class smartAI(player):
         tempbigWins[majorboard] = letter
         
         for i in range (len(board.winCombos)):
+          
           if tempbigWins[board.winCombos[i][0]] == tempbigWins[board.winCombos[i][1]] == tempbigWins[board.winCombos[i][2]] == self.letter and board.main[majorboard][boardwin[x][1]] != "-" and board.bigWins[boardwin[x][0]] == "":
             
             #this "abort" variable's assignment essentially overrides the square selection using ratings since picking this square will win the game for the AI instantly.
@@ -535,200 +537,199 @@ class smartAI(player):
           ==tempbigWins[board.winCombos[y][2]] == minletter:
             ratings[x][2] =+ 70
 
-    #Altering the weights in favour of majorboards that will result in two majorboards being won in a row.
-    TWOINROWPRIORITY = 8
-
-    if self.repeat is False:
-      #top row
-      if situbigwins[0] == "" == situbigwins[1] and situbigwins[2] == letter:
-        for x in range(len(self.positives[0])):
-          self.positives[0][x][2] =self.positives[0][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[1])):
-          self.positives[1][y][2] =self.positives[1][y][2]+TWOINROWPRIORITY
-
-      elif situbigwins[2] == "" == situbigwins[1] and situbigwins[0] == letter:
-        for x in range(len(self.positives[2])):
-          self.positives[2][x][2] =self.positives[2][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[1])):
-          self.positives[1][y][2] =self.positives[1][y][2]+TWOINROWPRIORITY
-
-      elif situbigwins[2] == "" == situbigwins[0] and situbigwins[1] == letter:
-        for x in range(len(self.positives[0])):
-          self.positives[0][x][2] =self.positives[0][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[2])):
-          self.positives[2][y][2] =self.positives[2][y][2]+TWOINROWPRIORITY
-
-    #middle row
-      if situbigwins[3] == "" == situbigwins[4] and situbigwins[5] == letter:
-
-        for x in range(len(self.positives[3])):
-          self.positives[3][x][2] =self.positives[3][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[4])):
-          self.positives[4][y][2] =self.positives[4][y][2]+TWOINROWPRIORITY
-
-      elif situbigwins[3] == "" == situbigwins[5] and situbigwins[4] == letter:
-        for x in range(len(self.positives[3])):
-          self.positives[3][x][2] =self.positives[3][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[5])):
-          self.positives[5][y][2] =self.positives[5][y][2]+TWOINROWPRIORITY
-
-      elif situbigwins[5] == "" == situbigwins[4] and situbigwins[3] == letter:
-        for x in range(len(self.positives[5])):
-          self.positives[5][x][2] =self.positives[5][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[4])):
-          self.positives[4][y][2] =self.positives[4][y][2]+TWOINROWPRIORITY
-
-    #bottom row
-      if situbigwins[6] == "" == situbigwins[7] and situbigwins[8] == letter:
-        for x in range(len(self.positives[6])):
-          self.positives[6][x][2] =self.positives[6][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[7])):
-          self.positives[7][y][2] =self.positives[7][y][2]+TWOINROWPRIORITY
-
-      elif situbigwins[6] == "" == situbigwins[8] and situbigwins[7] == letter:
-        for x in range(len(self.positives[6])):
-          self.positives[6][x][2] =self.positives[6][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[8])):
-          self.positives[8][y][2] =self.positives[8][y][2]+TWOINROWPRIORITY
-
-      elif situbigwins[8] == "" == situbigwins[7] and situbigwins[6] == letter:
-        for x in range(len(self.positives[8])):
-          self.positives[8][x][2] =self.positives[8][x][2]+ TWOINROWPRIORITY
-
-        for y in range(len(self.positives[7])):
-          self.positives[7][y][2] =self.positives[7][y][2]+TWOINROWPRIORITY
-
-    #left column
-      if situbigwins[0] == "" == situbigwins[3] and situbigwins[6] == letter:
-        for x in range(len(self.positives[0])):
-          self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[3])):
-          self.positives[3][x][2] =self.positives[3][x][2]+TWOINROWPRIORITY
-      elif situbigwins[0] == "" == situbigwins[6] and situbigwins[3] == letter:
-        for x in range(len(self.positives[0])):
-          self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[6])):
-          self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
-      elif situbigwins[6] == "" == situbigwins[3] and situbigwins[0] == letter:
-        for x in range(len(self.positives[6])):
-          self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[3])):
-          self.positives[3][x][2] =self.positives[3][x][2]+TWOINROWPRIORITY
-    #middle column
-      if situbigwins[1] == "" == situbigwins[4] and situbigwins[7] == letter:
-        for x in range(len(self.positives[1])):
-          self.positives[1][x][2] =self.positives[1][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[4])):
-          self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
-      elif situbigwins[1] == "" == situbigwins[7] and situbigwins[4] == letter:
-        for x in range(len(self.positives[1])):
-          self.positives[1][x][2] =self.positives[1][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[7])):
-          self.positives[7][x][2] =self.positives[7][x][2]+TWOINROWPRIORITY
-      elif situbigwins[7] == "" == situbigwins[4] and situbigwins[1] == letter:
-        for x in range(len(self.positives[7])):
-          self.positives[7][x][2] =self.positives[7][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[4])):
-          self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
-
-    #right column
-      if situbigwins[2] == "" == situbigwins[5] and situbigwins[8] == letter:
-        for x in range(len(self.positives[2])):
-          self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[5])):
-          self.positives[5][x][2] =self.positives[5][x][2]+TWOINROWPRIORITY
-      elif situbigwins[2] == "" == situbigwins[8] and situbigwins[5] ==letter:
-        for x in range(len(self.positives[2])):
-          self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[8])):
-          self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
-      elif situbigwins[8] == "" == situbigwins[5] and situbigwins[2] == letter:
-        for x in range(len(self.positives[8])):
-          self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[5])):
-          self.positives[5][x][2] =self.positives[5][x][2]+TWOINROWPRIORITY
-
-    #left diagonal
-      if situbigwins[0] == "" == situbigwins[4] and situbigwins[8] == letter:
-        for x in range(len(self.positives[0])):
-          self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[4])):
-          self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
-
-      elif situbigwins[0] == "" == situbigwins[8] and situbigwins[4] == letter:
-        for x in range(len(self.positives[0])):
-          self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[8])):
-          self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
-
-      elif situbigwins[8] == "" == situbigwins[4] and situbigwins[0] == letter:
-        for x in range(len(self.positives[8])):
-          self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[4])):
-          self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
-
-    #right diagonal
-      if situbigwins[2] == "" == situbigwins[4] and situbigwins[6] == letter:
-        for x in range(len(self.positives[2])):
-          self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[4])):
-          self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
-
-      elif situbigwins[2] == "" == situbigwins[6] and situbigwins[4] == letter:
-        for x in range(len(self.positives[2])):
-          self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[6])):
-          self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
-
-      elif situbigwins[6] == "" == situbigwins[4] and situbigwins[2] == letter:
-        for x in range(len(self.positives[6])):
-          self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
-        for x in range(len(self.positives[4])):
-          self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
-
-      THREEINROWPRIORITY = 30
-    #Altering majorboard weightings based upon a 3 in a row.
-      if situbigwins[0] == "" and situbigwins[4] == situbigwins[8] == letter or situbigwins[1] == situbigwins[2] == letter or situbigwins[6] == situbigwins[3] == letter:
-        for x in range(len(self.positives[0])):
-          self.positives[0][x][2] = self.positives[0][x][2]+THREEINROWPRIORITY
-      if situbigwins[2] == "" and situbigwins[4] == situbigwins[6] == letter or situbigwins[1] == situbigwins[0] == letter or situbigwins[8] == situbigwins[5] == letter:
-        for x in range(len(self.positives[2])):
-          self.positives[2][x][2] = self.positives[2][x][2]+THREEINROWPRIORITY
-      if situbigwins[6] == "" and situbigwins[4] == situbigwins[2] == letter or situbigwins[0] == situbigwins[3] == letter or situbigwins[8] == situbigwins[7] == letter:
-        for x in range(len(self.positives[6])):
-          self.positives[6][x][2] = self.positives[6][x][2]+THREEINROWPRIORITY
-      if situbigwins[8] == "" and situbigwins[4] == situbigwins[0] == letter or situbigwins[2] == situbigwins[5] == letter or situbigwins[6] == situbigwins[7] == letter:
-        for x in range(len(self.positives[8])):
-          self.positives[8][x][2] = self.positives[8][x][2]+THREEINROWPRIORITY
-      if situbigwins[1] == "" and situbigwins[4] == situbigwins[7] == letter or situbigwins[2] == situbigwins[0] == letter:
-        for x in range(len(self.positives[1])):
-          self.positives[1][x][2] =self.positives[1][x][2] +THREEINROWPRIORITY
-      if situbigwins[3] == "" and situbigwins[4] == situbigwins[5] == letter or situbigwins[6] == situbigwins[0] == letter:
-        for x in range(len(self.positives[3])):
-          self.positives[3][x][2] = self.positives[3][x][2] +THREEINROWPRIORITY
-      if situbigwins[5] == "" and situbigwins[4] == situbigwins[3] == letter or situbigwins[2] == situbigwins[8] == letter:
-        for x in range(len(self.positives[5])):
-          self.positives[5][x][2] = self.positives[5][x][2] +THREEINROWPRIORITY
-      if situbigwins[7] == "" and situbigwins[1] == situbigwins[4] == letter or situbigwins[8] == situbigwins[6] == letter:
-        for x in range(len(self.positives[7])):
-          self.positives[7][x][2] = self.positives[7][x][2]+THREEINROWPRIORITY
-      if situbigwins[4] == "" and situbigwins[1] == situbigwins[7] == letter or situbigwins[8] == situbigwins[0] == letter or situbigwins[6] == situbigwins[2] == letter or situbigwins[3] == situbigwins[5] == letter:
-        for x in range(len(self.positives[4])):
-          self.positives[4][x][2] = self.positives[4][x][2]+THREEINROWPRIORITY
-
-    #self.repeat prevents some ratings from being added repeatedly in the case where the AI has multiple boards to evaluate.
-    self.repeat = True
+  
     
     return ratings
 
+
+  def prioritiser(self,situbigwins,letter):
+    
+    #Altering the weights in favour of majorboards that will result in two majorboards being won in a row.
+    TWOINROWPRIORITY = 8
+
+    #top row
+    if situbigwins[0] == "" == situbigwins[1] and situbigwins[2] == letter:
+      for x in range(len(self.positives[0])):
+        self.positives[0][x][2] =self.positives[0][x][2]+ TWOINROWPRIORITY
+      for y in range(len(self.positives[1])):
+        self.positives[1][y][2] =self.positives[1][y][2]+TWOINROWPRIORITY
+
+    elif situbigwins[2] == "" == situbigwins[1] and situbigwins[0] == letter:
+      for x in range(len(self.positives[2])):
+        self.positives[2][x][2] =self.positives[2][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[1])):
+        self.positives[1][y][2] =self.positives[1][y][2]+TWOINROWPRIORITY
+
+    elif situbigwins[2] == "" == situbigwins[0] and situbigwins[1] == letter:
+      for x in range(len(self.positives[0])):
+        self.positives[0][x][2] =self.positives[0][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[2])):
+        self.positives[2][y][2] =self.positives[2][y][2]+TWOINROWPRIORITY
+
+    #middle row
+    if situbigwins[3] == "" == situbigwins[4] and situbigwins[5] == letter:
+
+      for x in range(len(self.positives[3])):
+        self.positives[3][x][2] =self.positives[3][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[4])):
+        self.positives[4][y][2] =self.positives[4][y][2]+TWOINROWPRIORITY
+
+    elif situbigwins[3] == "" == situbigwins[5] and situbigwins[4] == letter:
+      for x in range(len(self.positives[3])):
+        self.positives[3][x][2] =self.positives[3][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[5])):
+        self.positives[5][y][2] =self.positives[5][y][2]+TWOINROWPRIORITY
+
+    elif situbigwins[5] == "" == situbigwins[4] and situbigwins[3] == letter:
+      for x in range(len(self.positives[5])):
+        self.positives[5][x][2] =self.positives[5][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[4])):
+        self.positives[4][y][2] =self.positives[4][y][2]+TWOINROWPRIORITY
+
+    #bottom row
+    if situbigwins[6] == "" == situbigwins[7] and situbigwins[8] == letter:
+      for x in range(len(self.positives[6])):
+        self.positives[6][x][2] =self.positives[6][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[7])):
+        self.positives[7][y][2] =self.positives[7][y][2]+TWOINROWPRIORITY
+
+    elif situbigwins[6] == "" == situbigwins[8] and situbigwins[7] == letter:
+      for x in range(len(self.positives[6])):
+        self.positives[6][x][2] =self.positives[6][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[8])):
+        self.positives[8][y][2] =self.positives[8][y][2]+TWOINROWPRIORITY
+
+    elif situbigwins[8] == "" == situbigwins[7] and situbigwins[6] == letter:
+      for x in range(len(self.positives[8])):
+        self.positives[8][x][2] =self.positives[8][x][2]+ TWOINROWPRIORITY
+
+      for y in range(len(self.positives[7])):
+        self.positives[7][y][2] =self.positives[7][y][2]+TWOINROWPRIORITY
+
+    #left column
+    if situbigwins[0] == "" == situbigwins[3] and situbigwins[6] == letter:
+      for x in range(len(self.positives[0])):
+        self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[3])):
+        self.positives[3][x][2] =self.positives[3][x][2]+TWOINROWPRIORITY
+    elif situbigwins[0] == "" == situbigwins[6] and situbigwins[3] == letter:
+      for x in range(len(self.positives[0])):
+        self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[6])):
+        self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
+    elif situbigwins[6] == "" == situbigwins[3] and situbigwins[0] == letter:
+      for x in range(len(self.positives[6])):
+        self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[3])):
+        self.positives[3][x][2] =self.positives[3][x][2]+TWOINROWPRIORITY
+    #middle column
+    if situbigwins[1] == "" == situbigwins[4] and situbigwins[7] == letter:
+      for x in range(len(self.positives[1])):
+        self.positives[1][x][2] =self.positives[1][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[4])):
+        self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
+    elif situbigwins[1] == "" == situbigwins[7] and situbigwins[4] == letter:
+      for x in range(len(self.positives[1])):
+        self.positives[1][x][2] =self.positives[1][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[7])):
+        self.positives[7][x][2] =self.positives[7][x][2]+TWOINROWPRIORITY
+    elif situbigwins[7] == "" == situbigwins[4] and situbigwins[1] == letter:
+      for x in range(len(self.positives[7])):
+        self.positives[7][x][2] =self.positives[7][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[4])):
+        self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
+
+    #right column
+    if situbigwins[2] == "" == situbigwins[5] and situbigwins[8] == letter:
+      for x in range(len(self.positives[2])):
+        self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[5])):
+        self.positives[5][x][2] =self.positives[5][x][2]+TWOINROWPRIORITY
+    elif situbigwins[2] == "" == situbigwins[8] and situbigwins[5] ==letter:
+      for x in range(len(self.positives[2])):
+        self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[8])):
+        self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
+    elif situbigwins[8] == "" == situbigwins[5] and situbigwins[2] == letter:
+      for x in range(len(self.positives[8])):
+        self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[5])):
+        self.positives[5][x][2] =self.positives[5][x][2]+TWOINROWPRIORITY
+
+    #left diagonal
+    if situbigwins[0] == "" == situbigwins[4] and situbigwins[8] == letter:
+      for x in range(len(self.positives[0])):
+        self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[4])):
+        self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
+
+    elif situbigwins[0] == "" == situbigwins[8] and situbigwins[4] == letter:
+      for x in range(len(self.positives[0])):
+        self.positives[0][x][2] =self.positives[0][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[8])):
+        self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
+
+    elif situbigwins[8] == "" == situbigwins[4] and situbigwins[0] == letter:
+      for x in range(len(self.positives[8])):
+        self.positives[8][x][2] =self.positives[8][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[4])):
+        self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
+
+    #right diagonal
+    if situbigwins[2] == "" == situbigwins[4] and situbigwins[6] == letter:
+      for x in range(len(self.positives[2])):
+        self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[4])):
+        self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
+
+    elif situbigwins[2] == "" == situbigwins[6] and situbigwins[4] == letter:
+      for x in range(len(self.positives[2])):
+        self.positives[2][x][2] =self.positives[2][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[6])):
+        self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
+
+    elif situbigwins[6] == "" == situbigwins[4] and situbigwins[2] == letter:
+      for x in range(len(self.positives[6])):
+        self.positives[6][x][2] =self.positives[6][x][2]+TWOINROWPRIORITY
+      for x in range(len(self.positives[4])):
+        self.positives[4][x][2] =self.positives[4][x][2]+TWOINROWPRIORITY
+
+    THREEINROWPRIORITY = 30
+    #Altering majorboard weightings based upon a 3 in a row.
+    if situbigwins[0] == "" and situbigwins[4] == situbigwins[8] == letter or situbigwins[1] == situbigwins[2] == letter or situbigwins[6] == situbigwins[3] == letter:
+      for x in range(len(self.positives[0])):
+        self.positives[0][x][2] = self.positives[0][x][2]+THREEINROWPRIORITY
+    if situbigwins[2] == "" and situbigwins[4] == situbigwins[6] == letter or situbigwins[1] == situbigwins[0] == letter or situbigwins[8] == situbigwins[5] == letter:
+      for x in range(len(self.positives[2])):
+        self.positives[2][x][2] = self.positives[2][x][2]+THREEINROWPRIORITY
+    if situbigwins[6] == "" and situbigwins[4] == situbigwins[2] == letter or situbigwins[0] == situbigwins[3] == letter or situbigwins[8] == situbigwins[7] == letter:
+      for x in range(len(self.positives[6])):
+        self.positives[6][x][2] = self.positives[6][x][2]+THREEINROWPRIORITY
+    if situbigwins[8] == "" and situbigwins[4] == situbigwins[0] == letter or situbigwins[2] == situbigwins[5] == letter or situbigwins[6] == situbigwins[7] == letter:
+      for x in range(len(self.positives[8])):
+        self.positives[8][x][2] = self.positives[8][x][2]+THREEINROWPRIORITY
+    if situbigwins[1] == "" and situbigwins[4] == situbigwins[7] == letter or situbigwins[2] == situbigwins[0] == letter:
+      for x in range(len(self.positives[1])):
+        self.positives[1][x][2] =self.positives[1][x][2] +THREEINROWPRIORITY
+    if situbigwins[3] == "" and situbigwins[4] == situbigwins[5] == letter or situbigwins[6] == situbigwins[0] == letter:
+      for x in range(len(self.positives[3])):
+        self.positives[3][x][2] = self.positives[3][x][2] +THREEINROWPRIORITY
+    if situbigwins[5] == "" and situbigwins[4] == situbigwins[3] == letter or situbigwins[2] == situbigwins[8] == letter:
+      for x in range(len(self.positives[5])):
+        self.positives[5][x][2] = self.positives[5][x][2] +THREEINROWPRIORITY
+    if situbigwins[7] == "" and situbigwins[1] == situbigwins[4] == letter or situbigwins[8] == situbigwins[6] == letter:
+      for x in range(len(self.positives[7])):
+        self.positives[7][x][2] = self.positives[7][x][2]+THREEINROWPRIORITY
+    if situbigwins[4] == "" and situbigwins[1] == situbigwins[7] == letter or situbigwins[8] == situbigwins[0] == letter or situbigwins[6] == situbigwins[2] == letter or situbigwins[3] == situbigwins[5] == letter:
+      for x in range(len(self.positives[4])):
+        self.positives[4][x][2] = self.positives[4][x][2]+THREEINROWPRIORITY
 
   #The program that works with the ratings provided by the rate function.
 
@@ -740,7 +741,6 @@ class smartAI(player):
     #A list containing the biggest value from each of the user's possible boards. 
     self.biggestEach = []
     
-    self.repeat = False
 
 
     #Rating the AI's available moves if the board it was sent to is available (not won or drawn).
@@ -757,11 +757,16 @@ class smartAI(player):
           self.positives[x].append(currentrates[y])
 
 
+
       #Removing any ratings in boards that are unavailable.
       for j in board.findUnavailableMajor(inputbigWins):
         self.positives[j] = []
+
+
+      #updating the ratings to prioritize getting multiple board wins in a row
+      self.prioritiser(inputbigWins,self.letter)
+
     
-    self.repeat = False
     
     #This part of the function creates a copy of the board for each of the AI's possible moves, assigning that square to the AI's letter on the copied board.
     #This copied board is then rated from the user's perspective.
@@ -878,7 +883,7 @@ class smartAI(player):
       yPos =yPos+200
 
     #Drawing the AI's letter (O) onto their chosen square.
-    pygame.draw.circle(screen,OCLOUR,(xPos,yPos),40,width = 9)
+    pygame.draw.circle(screen,OCOLOUR,(xPos,yPos),40,width = 9)
     time.sleep(2)
     pygame.display.update()
 
@@ -919,7 +924,7 @@ SCREENHEIGHT = 900
 whereClicked = []
 
 XCOLOUR = (51,153,255)
-OCLOUR = (255,51,51)
+OCOLOUR = (255,51,51)
 
 #one variable for each value of the whereClicked co-ordinates
 clickedX = 0
