@@ -8,16 +8,16 @@ smallest = float('-inf')
 #all the subprograms for the appearance and processes of the game's board
 class Board:
   def __init__(self):
-    
+
     #The list that makes up the board that the game is played on.
     self.main = []
-    
+
     #Colour that makes up the lines/grid of the board
     self.GRIDCOLOUR = (50,50,50)
 
     #Colour of the background of the board
     self.backgroundColour = (255,255,200)
-   
+
     #Assigning 9 lists, each with a length of 9 empty values to the board. 
     #This allows for a square to be found using the board's index followed by the square's index almost acting as a co-ordinate system.
     for _ in range (9):
@@ -28,13 +28,13 @@ class Board:
     #A dictionary containing the status of all 9 boards. Changed to the letter of whoever wins the square or "DRAW" in the case of a draw in that square. I have made 9 an option so that the first player can play in any board.
     self.bigWins = {0:"",1:"",2:"",3:"",4:"",5:"",6:"",7:"",\
                     8:"",9:"False"}
-    
+
     #A variable to validify if the game is won. Changed to the letter of whoever won if a win occurs or to "DRAW" if the game is a draw.
     self.gameWon = False
-    
+
     #A 2D array containing all of the possible win combinations of noughts and crosses. Used to check on a square level and a board level.
     self.winCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
-    
+
     #Finds the major board that was last played by a player so that it can be checked for a win.
     self.recentMajor = 0
 
@@ -87,12 +87,12 @@ class Board:
     for y in range(len(self.winCombos)):
       if self.main[self.recentMajor][self.winCombos[y][0]] == self.main[self.recentMajor][self.winCombos[y][1]] == self.main[self.recentMajor][self.winCombos[y][2]]\
       and self.main[self.recentMajor][self.winCombos[y][0]] !="-":
-        
+
         self.bigWins[self.recentMajor] = self.main[self.recentMajor][self.winCombos[y][0]]
         print("Square",self.recentMajor,"won by",self.main[self.recentMajor][self.winCombos[y][0]])
-        
+
         found = True
-      
+
       #Checking for a draw
       if self.findAvailable(self.recentMajor,self.main) == []:
         self.bigWins[self.recentMajor] = "DRAW"
@@ -118,11 +118,11 @@ class Board:
           pygame.draw.line(screen,XCOLOUR,(xPos+290,yPos+10),(xPos+10,yPos+290),width=10)
         elif board.bigWins[x] =="O":
           pygame.draw.circle(screen,OCOLOUR,(xPos+150,yPos+150),140,width=10)
-        
+
 
         pygame.display.update()
 
-    
+
     #If a major square has been won, here it checks for a whole game win.
     if found is True:
       for i in range(len(self.winCombos)):
@@ -131,12 +131,12 @@ class Board:
           self.gameWon = self.bigWins[self.winCombos[i][0]]
           self.display()
           print("Player", self.bigWins[self.winCombos[i][0]], "wins!")
-   
+
     elif self.findAvailableMajor(self.bigWins) == []:
       self.gameWon = "DRAW"
 
-      
-      
+
+
 
   #Function to draw the grid and background onto the pygame display.
   def drawGrid(self):
@@ -213,7 +213,7 @@ class user(player):
 
       #play.nextMajor is the variable that represents the board that the next user must play in (corresponding to the square the current user selected)
       play.nextMajor = self.littleChoice
-      
+
       #board.recentMajor is used to store the board that was just played in so that board.winCheck() knows what board it must check for a win.
       board.recentMajor = self.bigChoice
 
@@ -239,10 +239,10 @@ class smartAI(player):
     #self.rememberWins remembers the co-ordinates of a play that will win a board. Thus when analysing this play from the user's perspective, that board will have been won.
     self.rememberWins = []
     boardwin = []
-    
+
     #variable used to validify if a 2-1 block was made
     winblocked = False
-    
+
     #establishes what player the evaluation is looking out for 
     if letter == self.letter:
       minletter = self.userLetter
@@ -258,7 +258,7 @@ class smartAI(player):
 
 
     #Checking for a two in a row of the same letter on any row, column or diagonal.
-    
+
     #constant for the rating of a two in a row
     TWOINROW =5
 
@@ -377,12 +377,12 @@ class smartAI(player):
 
 
     #CHECKING FOR A THREE IN A ROW / A BOARD WIN
-    
+
     THREEINROW = 12
 
     #boardwin becomes a 2d array recording the co-ordinates of a square that if played, a board would be won.
     boardwin =[]
-    
+
     if situboard[majorboard][0] == "-" and \
     situboard[majorboard][1] == situboard[majorboard][2] == letter or\
     situboard[majorboard][6] == situboard[majorboard][3] == letter or\
@@ -452,11 +452,11 @@ class smartAI(player):
           self.rememberWins.append(boardwin[x])
         tempbigWins = copy.deepcopy(situbigwins)
         tempbigWins[majorboard] = letter
-        
+
         for i in range (len(board.winCombos)):
-          
+
           if tempbigWins[board.winCombos[i][0]] == tempbigWins[board.winCombos[i][1]] == tempbigWins[board.winCombos[i][2]] == self.letter and board.main[majorboard][boardwin[x][1]] != "-" and board.bigWins[boardwin[x][0]] == "":
-            
+
             #this "abort" variable's assignment essentially overrides the square selection using ratings since picking this square will win the game for the AI instantly.
             self.abort = [majorboard,boardwin[x][1]]
 
@@ -537,13 +537,13 @@ class smartAI(player):
           ==tempbigWins[board.winCombos[y][2]] == minletter:
             ratings[x][2] =+ 70
 
-  
-    
+
+
     return ratings
 
 
   def prioritiser(self,situbigwins,letter):
-    
+
     #Altering the weights in favour of majorboards that will result in two majorboards being won in a row.
     TWOINROWPRIORITY = 8
 
@@ -737,10 +737,10 @@ class smartAI(player):
     self.abort = False
     self.positives = [[],[],[],[],[],[],[],[],[]]
     self.negatives = [[],[],[],[],[],[],[],[],[]]
-    
+
     #A list containing the biggest value from each of the user's possible boards. 
     self.biggestEach = []
-    
+
 
 
     #Rating the AI's available moves if the board it was sent to is available (not won or drawn).
@@ -766,16 +766,16 @@ class smartAI(player):
       #updating the ratings to prioritize getting multiple board wins in a row
       self.prioritiser(inputbigWins,self.letter)
 
-    
-    
+
+
     #This part of the function creates a copy of the board for each of the AI's possible moves, assigning that square to the AI's letter on the copied board.
     #This copied board is then rated from the user's perspective.
-    
+
     #Repeat for each board with a possible move.
     for y in range(len(self.positives)):
       #Repeat for all possible moves within that board
       for x in self.positives[y]:
-        
+
         #copying the board and the bigWins
         newboard = copy.deepcopy(inputboard)
         newbigWins = copy.deepcopy(inputbigWins)
@@ -804,10 +804,10 @@ class smartAI(player):
     #Finding the highes rating of all the ratings from the user's perspective
     for y in range(9):
       biggestval = smallest      
-      
+
       if self.negatives[y] == []:
         biggestval = "invalid"
-      
+
       else:
         for x in range(len(self.negatives[y])):
           if self.negatives[y][x][2] > biggestval:
@@ -825,14 +825,14 @@ class smartAI(player):
       for x in range(len(self.positives[y])):
         self.positives[y][x][2] = self.positives[y][x][2]- self.biggestEach[self.positives[y][x][1]]
 
-    
+
     #Picking the largest score from the AI's perspective after the user's moves are taken into account.
 
     picking = ["","",smallest]
-    
+
     print("NEW POSITIVES AFTER EVALUATION")
     print(self.positives)
-    
+
     for y in range (9):
       for x in range(len(self.positives[y])):
         if self.positives[y] !=[] and self.positives[y][x][2] > picking[2]:
@@ -841,7 +841,7 @@ class smartAI(player):
 
 
     #If a game win for the AI has been detected, this code overrides the AI's chosen square.
-    if self.abort is not False:
+    if self.abort is not False and board.main[self.abort[0]][self.abort[1]] == "-":
       self.bigChoice = self.abort[0]
       self.littleChoice = self.abort[1]
 
@@ -849,7 +849,7 @@ class smartAI(player):
       self.bigChoice = picking[0]
       self.littleChoice = picking[1]
 
-    
+
     board.main[self.bigChoice][self.littleChoice] = self.letter
 
     #purpose of these lines listed on lines 214 and 217
@@ -949,10 +949,10 @@ modeChosen = False
 
 
 while run:
-  
+
   #used to differentiate between chosing your option in the menu and the first click of a square on the board.
   firstClick = False
-  
+
   for event in pygame.event.get():
 
     if event.type == pygame.QUIT:
@@ -977,7 +977,7 @@ while run:
         firstClick = True
         play.pvp()
         pygame.display.update()
-      
+
       #user clicked on the Player vs Smart AI button.
       elif modeChosen is False and (324<clickedX<575 and 432<clickedY<503):
         modeChosen = "PVC"
@@ -985,14 +985,14 @@ while run:
         play.smart()
         pygame.display.update()
         firstClick = True
-      
+
       #user clicked on the how to play button. Displays How to Play menu.
       elif modeChosen is False and (324<clickedX<575 and 553<clickedY<623):
         modeChosen = "HTP"
         screen.blit(HOWTOPLAY,(0,0))
         pygame.display.update()
         firstClick = True
-      
+
       #user clicked on QUIT button. Ends the program.
       elif modeChosen is False and (324<clickedX<575 and 685<clickedY<756):
         run = False
@@ -1009,8 +1009,8 @@ while run:
         if play.xplayer.choiceValid is True:
           board.winCheck()
           numberTurn= numberTurn*-1
-      
-      
+
+
       elif numberTurn == 1:
         play.oplayer.move()
 
@@ -1020,7 +1020,7 @@ while run:
 
     #If player has selected the player vs smart AI mode, this section of code interprets what a mouse click relates to. 
     elif event.type == pygame.MOUSEBUTTONDOWN and board.gameWon is False and modeChosen == "PVC" and firstClick is False:
-      
+
       if numberTurn == -1 :
         play.xplayer.move()
         if play.xplayer.choiceValid is True:
@@ -1048,6 +1048,8 @@ while run:
       elif board.gameWon == "DRAW":
         screen.blit(DRAW,(0,0))
         pygame.display.update()
+
+      
 
     #When user clicks "RETURN TO MENU" button, this section of code resets the board and returns the user to the menu.
     if event.type == pygame.MOUSEBUTTONDOWN and board.gameWon is not False and (305 < clickedX < 595 and 593 < clickedY < 703):
